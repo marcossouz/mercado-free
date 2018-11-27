@@ -129,6 +129,9 @@ public class Menu extends javax.swing.JFrame {
 
     private void btnListarProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarProdutosActionPerformed
         // TODO add your handling code here:
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setVisible(false);
+        ControllerProduto.telaListagem();
     }//GEN-LAST:event_btnListarProdutosActionPerformed
 
     private void btnRealizarVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRealizarVendasActionPerformed

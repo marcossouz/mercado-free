@@ -89,7 +89,7 @@ public class CadastroProduto extends javax.swing.JFrame {
             }
         });
 
-        btnCancelar.setText("Cancelar");
+        btnCancelar.setText("Voltar");
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
@@ -198,9 +198,9 @@ public class CadastroProduto extends javax.swing.JFrame {
         // TODO add your handling code here:
         Produto produto = new Produto();
         produto.setNome(txtNomeProduto.getText());
-        produto.setTipo(cbxTipoProduto.getItemAt(WIDTH));
+        produto.setTipo((String)cbxTipoProduto.getSelectedItem());
         produto.setCor(txtCorProduto.getText());
-        produto.setGarantia(txtGarantiaProduto.getText());
+        produto.setGarantia(Integer.parseInt(txtGarantiaProduto.getText()));
         produto.setValor(Double.parseDouble(txtValorProduto.getText()));
         
         ControllerProduto.CadastroProduto(produto);

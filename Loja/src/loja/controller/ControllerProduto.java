@@ -3,6 +3,7 @@ package loja.controller;
 import loja.db.DAO_Produtos;
 import loja.model.Produto;
 import loja.view.CadastroProduto;
+import loja.view.ListarProdutos;
 
 
 public class ControllerProduto {
@@ -11,7 +12,7 @@ public class ControllerProduto {
     }
     
     public static void telaListagem(){
-//        CadastroProduto.telaListagem();
+        ListarProdutos lp = new ListarProdutos();
     }
     
     public static void CadastroProduto(Produto produto){

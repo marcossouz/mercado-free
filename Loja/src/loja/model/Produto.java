@@ -1,11 +1,21 @@
 package loja.model;
 
 public class Produto {
+    
+    int id;
     String nome;
     String tipo;
     double valor;
     String cor;
-    String garantia;
+    int garantia;
+    
+    public void setId(int id){
+        this.id = id;
+    }
+    
+    public int getId(){
+        return id;
+    }
 
     public String getNome() {
         return nome;
@@ -39,11 +49,11 @@ public class Produto {
         this.cor = cor;
     }
 
-    public String getGarantia() {
+    public int getGarantia() {
         return garantia;
     }
 
-    public void setGarantia(String garantia) {
+    public void setGarantia(int garantia) {
         this.garantia = garantia;
     }
 }

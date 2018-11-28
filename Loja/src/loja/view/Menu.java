@@ -7,6 +7,7 @@ package loja.view;
 
 import javax.swing.JFrame;
 import loja.controller.ControllerProduto;
+import loja.controller.ControllerVenda;
 
 /**
  *
@@ -125,6 +126,9 @@ public class Menu extends javax.swing.JFrame {
 
     private void btnListagemVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListagemVendasActionPerformed
         // TODO add your handling code here:
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setVisible(false);
+        ControllerVenda.listarVendas();
     }//GEN-LAST:event_btnListagemVendasActionPerformed
 
     private void btnListarProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarProdutosActionPerformed
@@ -136,6 +140,9 @@ public class Menu extends javax.swing.JFrame {
 
     private void btnRealizarVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRealizarVendasActionPerformed
         // TODO add your handling code here:
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setVisible(false);
+        ControllerVenda.realizarVenda();
     }//GEN-LAST:event_btnRealizarVendasActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

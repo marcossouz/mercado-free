@@ -5,7 +5,7 @@ public class Produto {
     int id;
     String nome;
     String tipo;
-    double valor;
+    float valor;
     String cor;
     int garantia;
     
@@ -33,11 +33,11 @@ public class Produto {
         this.tipo = tipo;
     }
 
-    public Double getValor() {
+    public float getValor() {
         return valor;
     }
 
-    public void setValor(Double valor) {
+    public void setValor(float valor) {
         this.valor = valor;
     }
 

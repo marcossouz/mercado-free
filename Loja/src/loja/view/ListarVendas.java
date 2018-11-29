@@ -19,6 +19,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import loja.db.DAO_Produtos;
 import loja.model.Produto;
+import loja.model.Venda;
 
 /**
  *
@@ -60,21 +61,19 @@ public class ListarVendas extends JFrame implements ActionListener{
     private void CriarTable() {
         tabela = new JTable(modelo);
         modelo.addColumn("Id");
-        modelo.addColumn("Nome");
-        modelo.addColumn("Tipo");
         modelo.addColumn("Valor");
-        modelo.addColumn("Cor");
-        modelo.addColumn("Garantia");
+        modelo.addColumn("Desconto");
+        modelo.addColumn("IdProduto");
 
-        ArrayList produtos = new ArrayList();
+        ArrayList vendas = new ArrayList();
               
-        produtos = DAO_Produtos.getListProdutos();
-        Produto p = new Produto();
+        vendas = DAO_Produtos.getListVendas();
+        Venda v = new Venda();
         
-        for (Iterator iterator = produtos.iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = vendas.iterator(); iterator.hasNext(); ) {
             
-            p = (Produto) iterator.next();
-            modelo.addRow(new Object[]{p.getId(), p.getNome(), p.getTipo(), p.getValor(), p.getCor(), p.getGarantia()});
+            v = (Venda) iterator.next();
+            modelo.addRow(new Object[]{v.getId(), v.getValor_venda(), v.getDesconto(), v.getId_produto()});
     
         }
     }

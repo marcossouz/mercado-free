@@ -55,7 +55,7 @@ public class ListarProdutos extends JFrame implements ActionListener {
 
         getContentPane().add(painelFundo);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(500, 320);
+        setSize(700, 400);
         setVisible(true);
         btnVoltar.addActionListener(this);
         btnEditar.addActionListener(this);

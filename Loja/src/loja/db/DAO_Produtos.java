@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import loja.model.Produto;
+import loja.model.Venda;
 
 public class DAO_Produtos {
 
@@ -23,7 +24,7 @@ public class DAO_Produtos {
 
             stmt.setString(1, produto.getNome());
             stmt.setString(2, produto.getTipo());
-            stmt.setDouble(3, produto.getValor());
+            stmt.setFloat(3, produto.getValor());
             stmt.setString(4, produto.getCor());
             stmt.setInt(5, produto.getGarantia());
 
@@ -58,7 +59,7 @@ public class DAO_Produtos {
                 produto.setId(rs.getInt("id"));
                 produto.setNome(rs.getString("nome"));
                 produto.setTipo(rs.getString("tipo"));
-                produto.setValor(rs.getDouble("valor"));
+                produto.setValor(rs.getFloat("valor"));
                 produto.setCor(rs.getString("cor"));
                 produto.setGarantia(rs.getInt("garantia"));
 
@@ -71,5 +72,40 @@ public class DAO_Produtos {
         }
 
         return produtos;
+    }
+    
+    public static ArrayList<Venda> getListVendas() {
+
+        Connection conn = null;
+        PreparedStatement pstm = null;
+        ResultSet rs = null;
+        ArrayList<Venda> vendas = new ArrayList<Venda>();
+
+        String sql = "select * from venda";
+
+        try {
+            conn = ConnectionFactory.getConnection();
+            pstm = conn.prepareStatement(sql);
+            rs = pstm.executeQuery();
+
+            
+            while (rs.next()) {
+
+                Venda venda = new Venda();
+                
+                venda.setId(rs.getInt("id"));
+                venda.setValor_venda(rs.getFloat("valor_venda"));
+                venda.setDesconto(rs.getFloat("desconto"));
+                venda.setId_produto(rs.getInt("id_produto"));
+
+                vendas.add(venda);
+            }
+
+            ConnectionFactory.fechaConexao(conn, pstm, rs);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Erro ao listar vendas" + e.getMessage());
+        }
+
+        return vendas;
     }
 }

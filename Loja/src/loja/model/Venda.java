@@ -1,31 +1,42 @@
 package loja.model;
 
 public class Venda {
-    String valor_venda;
-    String desconto;
-    String id_produto;
+    int id;
+    float valor_venda;
+    float desconto;
+    int id_produto;
 
-    public String getValor_venda() {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public float getValor_venda() {
         return valor_venda;
     }
 
-    public void setValor_venda(String valor_venda) {
+    public void setValor_venda(float valor_venda) {
         this.valor_venda = valor_venda;
     }
 
-    public String getDesconto() {
+    public float getDesconto() {
         return desconto;
     }
 
-    public void setDesconto(String desconto) {
+    public void setDesconto(float desconto) {
         this.desconto = desconto;
     }
 
-    public String getId_produto() {
+    public int getId_produto() {
         return id_produto;
     }
 
-    public void setId_produto(String id_produto) {
+    public void setId_produto(int id_produto) {
         this.id_produto = id_produto;
     }
+
+    
 }

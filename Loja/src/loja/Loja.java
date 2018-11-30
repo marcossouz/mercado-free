@@ -6,6 +6,6 @@ import loja.view.Menu;
 
 public class Loja {
     public static void main(String[] args) {
-        Menu.Menu();         
+        Menu.Menu();       
     }
 }

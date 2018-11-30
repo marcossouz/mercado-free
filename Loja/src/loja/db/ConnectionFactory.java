@@ -11,7 +11,7 @@ public class ConnectionFactory {
     public static Connection getConnection(){
         String url = "jdbc:mysql://localhost:3306/mercadofree";
         String user = "root";
-        String password = "root";
+        String password = "";
 
         try {
             Connection conexao = DriverManager.getConnection(url, user, password);

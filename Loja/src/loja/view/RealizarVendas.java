@@ -5,36 +5,49 @@
  */
 package loja.view;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import loja.controller.GeneratorPDF;
 import loja.db.DAO_Produtos;
+import loja.db.DAO_Vendas;
 import loja.model.Produto;
+import loja.model.Venda;
 
 /**
  *
  * @author marco
  */
 public class RealizarVendas extends javax.swing.JFrame {
-    String cupom = "              ------------------   CUPOM FISCAL   ------------------ \n\n" +
-                                  "                ITEM  PRODUTO  QUANT  VL_UN   VL_PL \n";
+
+    String cupom = "                    --------------------------------------   CUPOM FISCAL   ------------------------------------ \n\n"
+            + "                                ITEM       PRODUTO       QUANT       VL_UN    DESC   VL_PL \n";
+    Produto prod = new Produto();
+    int countItem = 1;
+    float valorTotal = 0;
+    float descontoParcial = 0;
+    ArrayList<Venda> vendas = new ArrayList<Venda>();
 
     /**
      * Creates new form Vendas
      */
     public RealizarVendas() {
         initComponents();
-        
+
         ArrayList produtos = new ArrayList();
-              
+
         produtos = DAO_Produtos.getListProdutos();
         Produto p = new Produto();
-        
-        for (Iterator iterator = produtos.iterator(); iterator.hasNext(); ) {
-            
+
+        for (Iterator iterator = produtos.iterator(); iterator.hasNext();) {
+
             p = (Produto) iterator.next();
-            this.produtos.addItem(p.getNome() + "    -- " + p.getValor());
-    
+            this.produtos.addItem(p.getNome() + " [" + p.getId() + "]");
+
         }
     }
 
@@ -55,14 +68,24 @@ public class RealizarVendas extends javax.swing.JFrame {
         painelCupomFiscal = new javax.swing.JTextPane();
         addProduto = new javax.swing.JButton();
         cancelarVenda = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        cancelarProduto = new javax.swing.JButton();
         quantidade = new javax.swing.JComboBox<>();
+        jLabel4 = new javax.swing.JLabel();
+        preco = new javax.swing.JTextField();
+        cod = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        finalizar = new javax.swing.JButton();
+        imprimirCupom = new javax.swing.JToggleButton();
+        txtdescontoParcial = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        txtdesconto = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        produtos.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                produtosActionPerformed(evt);
+        produtos.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                produtosItemStateChanged(evt);
             }
         });
 
@@ -83,48 +106,129 @@ public class RealizarVendas extends javax.swing.JFrame {
             }
         });
 
-        cancelarVenda.setText("Cancelar");
+        cancelarVenda.setText("Cancelar venda");
         cancelarVenda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelarVendaActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Cancelar produto");
+        cancelarProduto.setText("Cancelar produto");
+        cancelarProduto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarProdutoActionPerformed(evt);
+            }
+        });
 
         quantidade.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20" }));
+        quantidade.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                quantidadeItemStateChanged(evt);
+            }
+        });
+
+        jLabel4.setText("preco [R$]:");
+
+        preco.setEditable(false);
+
+        cod.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                codKeyReleased(evt);
+            }
+        });
+
+        jLabel5.setText("Código:");
+
+        finalizar.setText("Finalizar Compra");
+        finalizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                finalizarActionPerformed(evt);
+            }
+        });
+
+        imprimirCupom.setText("Imprimir Cupom Fiscal");
+        imprimirCupom.setEnabled(false);
+        imprimirCupom.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                imprimirCupomActionPerformed(evt);
+            }
+        });
+
+        txtdescontoParcial.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtdescontoParcialKeyReleased(evt);
+            }
+        });
+
+        jLabel6.setText("Desconto por unidade:");
+
+        jLabel7.setText("Desconto[R$]:");
+
+        txtdesconto.setEditable(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(136, 136, 136))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(finalizar)
+                                .addGap(18, 18, 18)
+                                .addComponent(imprimirCupom)
+                                .addGap(142, 142, 142))))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(cancelarVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(10, 10, 10)
-                                .addComponent(addProduto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(cancelarVenda, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(cancelarProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(addProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(39, 39, 39)
-                                .addComponent(produtos, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(quantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))
-                        .addGap(114, 114, 114))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(98, 98, 98))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(2, 2, 2)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(produtos, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGap(0, 0, Short.MAX_VALUE)
+                                                .addComponent(txtdescontoParcial, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(cod)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(quantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGap(30, 30, 30)
+                                                .addComponent(jLabel4)
+                                                .addGap(34, 34, 34))
+                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jLabel7)
+                                                .addGap(18, 18, 18)))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(txtdesconto, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
+                                            .addComponent(preco)))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -133,55 +237,195 @@ public class RealizarVendas extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(37, 37, 37)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(quantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(produtos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
+                    .addComponent(jLabel2)
+                    .addComponent(produtos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(addProduto)
-                    .addComponent(cancelarVenda)
-                    .addComponent(jButton3))
+                    .addComponent(quantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
+                    .addComponent(preco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtdescontoParcial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel7)
+                    .addComponent(txtdesconto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cancelarVenda, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(addProduto)
+                        .addComponent(cancelarProduto)))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addGap(25, 25, 25)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(imprimirCupom)
+                    .addComponent(finalizar))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void produtosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_produtosActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_produtosActionPerformed
-
     private void cancelarVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarVendaActionPerformed
         // TODO add your handling code here:
         this.setVisible(false);
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            Menu.Menu();
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Menu.Menu();
     }//GEN-LAST:event_cancelarVendaActionPerformed
 
     private void addProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addProdutoActionPerformed
         // TODO add your handling code here:
-        cupom += "\n                 001  Celular";
-        painelCupomFiscal.setText(cupom);      
+        String item = (String) produtos.getSelectedItem();
+        String cItem;
+        int pre = 0;
+        int pos = item.lastIndexOf(" [");
+        String idP = (String) produtos.getSelectedItem();
+        int preId = item.indexOf("[");
+        int posId = item.lastIndexOf("]");
+        
+        float precoParcial = 0;
+        String itemName = item.substring(pre, pos);
+        int idProduto = Integer.parseInt(idP.substring(preId+1, posId));
+
+        if (countItem < 10) {
+            cItem = "00" + countItem;
+        } else if (countItem < 100) {
+            cItem = "0" + countItem;
+        } else {
+            cItem = Integer.toString(countItem);
+        }
+
+        ++countItem;
+        precoParcial = Integer.parseInt((String) quantidade.getSelectedItem()) * Float.parseFloat(preco.getText());
+        precoParcial -= descontoParcial;
+        valorTotal += precoParcial;
+        
+        Venda venda = new Venda();
+        venda.setValor_venda(precoParcial);
+        venda.setDesconto(descontoParcial);
+        venda.setId_produto(idProduto);
+        venda.setQuantidade(Integer.parseInt((String) quantidade.getSelectedItem()));
+        
+        vendas.add(venda);
+
+        cupom += "\n                                    " + cItem
+                + "   " + itemName + "   "
+                + quantidade.getSelectedItem() + "   X   "
+                + preco.getText() + "    desc(" +  descontoParcial + ")    " + String.format("%.2f", precoParcial);
+        painelCupomFiscal.setText(cupom);
     }//GEN-LAST:event_addProdutoActionPerformed
 
-   
+    private void produtosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_produtosItemStateChanged
+        // TODO add your handling code here:
+        String item = (String) produtos.getSelectedItem();
+        int pre = item.indexOf("[");
+        int pos = item.lastIndexOf("]");
+
+        prod = DAO_Produtos.getProdutoById(Integer.parseInt(item.substring(pre + 1, pos)));
+
+        preco.setText(Float.toString(prod.getValor()));
+    }//GEN-LAST:event_produtosItemStateChanged
+
+    private void codKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_codKeyReleased
+        // TODO add your handling code here:
+        String s;
+        if (cod.getText().length() > 0) {
+            if (DAO_Produtos.getProdutoById(Integer.parseInt(cod.getText())).getNome() != null) {
+                s = DAO_Produtos.getProdutoById(Integer.parseInt(cod.getText())).getNome();
+                s += " [" + cod.getText() + "]";
+                produtos.setSelectedItem(s);
+            }
+        }
+    }//GEN-LAST:event_codKeyReleased
+
+    private void finalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finalizarActionPerformed
+        // TODO add your handling code here:
+
+        cupom += "\n\n                        ---------------------------------------------------------------------------------------------\n"
+                + "                                                                                                          total a pagar = " + String.format("%.2f", valorTotal);
+        painelCupomFiscal.setText(cupom);
+        imprimirCupom.setEnabled(true);
+        addProduto.setEnabled(false);
+        cancelarProduto.setEnabled(false);
+        finalizar.setEnabled(false);
+    }//GEN-LAST:event_finalizarActionPerformed
+
+    private void imprimirCupomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirCupomActionPerformed
+        // TODO add your handling code here:
+        GeneratorPDF gpdf = new GeneratorPDF();
+
+        String namePDF = gpdf.generatorPDF(cupom);
+
+        try {
+            Process p = Runtime.getRuntime().exec("cmd.exe /C " + namePDF + ".pdf");
+        } catch (IOException ex) {
+            Logger.getLogger(RealizarVendas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        DAO_Vendas.salvarVendas(vendas);
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(false);
+        Menu.Menu();
+    }//GEN-LAST:event_imprimirCupomActionPerformed
+
+    private void cancelarProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarProdutoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cancelarProdutoActionPerformed
+
+    private void txtdescontoParcialKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtdescontoParcialKeyReleased
+        // TODO add your handling code here:
+        calculaDesconto();
+
+    }//GEN-LAST:event_txtdescontoParcialKeyReleased
+
+    private void quantidadeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_quantidadeItemStateChanged
+        // TODO add your handling code here:
+        calculaDesconto();
+    }//GEN-LAST:event_quantidadeItemStateChanged
+
+    private void calculaDesconto() {
+        if (txtdescontoParcial.getText().length() > 0) {
+            try {
+                if (!Float.isNaN(Float.parseFloat(txtdescontoParcial.getText()))) {
+                    descontoParcial = Integer.parseInt((String) quantidade.getSelectedItem()) * Float.parseFloat(txtdescontoParcial.getText());
+                    txtdesconto.setText(Float.toString(descontoParcial));
+                }
+            } catch (Exception e) {
+                System.out.println("desconto Invalido");
+            }
+        } else {
+            descontoParcial = 0;
+            txtdesconto.setText("");
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addProduto;
+    private javax.swing.JButton cancelarProduto;
     private javax.swing.JButton cancelarVenda;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JTextField cod;
+    private javax.swing.JButton finalizar;
+    private javax.swing.JToggleButton imprimirCupom;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextPane painelCupomFiscal;
+    private javax.swing.JTextField preco;
     private javax.swing.JComboBox<String> produtos;
     private javax.swing.JComboBox<String> quantidade;
+    private javax.swing.JTextField txtdesconto;
+    private javax.swing.JTextField txtdescontoParcial;
     // End of variables declaration//GEN-END:variables
 
 }

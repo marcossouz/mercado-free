@@ -30,7 +30,7 @@ public class DAO_Produtos {
 
             stmt.executeUpdate();
             System.out.println("Dados inseridos com sucesso!");
-            
+
             ConnectionFactory.fechaConexao(conn, stmt);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Erro ao inserir contato" + e.getMessage());
@@ -51,11 +51,10 @@ public class DAO_Produtos {
             pstm = conn.prepareStatement(sql);
             rs = pstm.executeQuery();
 
-            
             while (rs.next()) {
 
                 Produto produto = new Produto();
-                
+
                 produto.setId(rs.getInt("id"));
                 produto.setNome(rs.getString("nome"));
                 produto.setTipo(rs.getString("tipo"));
@@ -73,7 +72,7 @@ public class DAO_Produtos {
 
         return produtos;
     }
-    
+
     public static ArrayList<Venda> getListVendas() {
 
         Connection conn = null;
@@ -88,15 +87,17 @@ public class DAO_Produtos {
             pstm = conn.prepareStatement(sql);
             rs = pstm.executeQuery();
 
-            
             while (rs.next()) {
 
                 Venda venda = new Venda();
-                
+
                 venda.setId(rs.getInt("id"));
+                venda.setData(rs.getString("data"));
                 venda.setValor_venda(rs.getFloat("valor_venda"));
                 venda.setDesconto(rs.getFloat("desconto"));
                 venda.setId_produto(rs.getInt("id_produto"));
+                venda.setQuantidade(rs.getInt("quantidade"));
+                venda.setProduto(getProdutoById(venda.getId_produto()));
 
                 vendas.add(venda);
             }
@@ -107,5 +108,78 @@ public class DAO_Produtos {
         }
 
         return vendas;
+    }
+
+    public static Produto getProdutoById(int id) {
+
+        Connection conn = null;
+        PreparedStatement pstm = null;
+        ResultSet rs = null;
+        Produto produto = new Produto();
+        String sql = "select * from produto where id =?";
+
+        try {
+            conn = ConnectionFactory.getConnection();
+            pstm = conn.prepareStatement(sql);
+
+            pstm.setInt(1, id);
+            rs = pstm.executeQuery();
+
+            if (rs.next()) {
+
+                produto.setId(rs.getInt("id"));
+                produto.setNome(rs.getString("nome"));
+                produto.setTipo(rs.getString("tipo"));
+                produto.setValor(rs.getFloat("valor"));
+                produto.setCor(rs.getString("cor"));
+                produto.setGarantia(rs.getInt("garantia"));
+
+            }
+
+            ConnectionFactory.fechaConexao(conn, pstm, rs);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Erro ao buscar produto por id" + e.getMessage());
+        }
+
+        return produto;
+    }
+
+    public static void deleteById(int id) {
+        Connection conn = null;
+        PreparedStatement pstm = null;
+        Produto produto = new Produto();
+        String sql = "delete from produto where id =?";
+
+        try {
+            conn = ConnectionFactory.getConnection();
+            pstm = conn.prepareStatement(sql);
+
+            pstm.setInt(1, id);
+            pstm.execute();
+
+            ConnectionFactory.fechaConexao(conn, pstm);
+        } catch (Exception e) {
+            System.out.println("Erro ao excluir produto por id" + e.getMessage());
+        }
+    }
+    
+    public static void atualizarById(int id, Produto p) {
+        Connection conn = null;
+        PreparedStatement pstm = null;
+        Produto produto = new Produto();
+        String sql = "update produto set nome = ?, tipo = ?, valor = ?, cor = ?, garantia = ? where id = ?";
+
+        try {
+            conn = ConnectionFactory.getConnection();
+            pstm = conn.prepareStatement(sql);
+
+            
+            pstm.setInt(1, id);
+            pstm.execute();
+
+            ConnectionFactory.fechaConexao(conn, pstm);
+        } catch (Exception e) {
+            System.out.println("Erro ao excluir produto por id" + e.getMessage());
+        }
     }
 }

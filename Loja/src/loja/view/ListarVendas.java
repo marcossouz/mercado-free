@@ -52,7 +52,7 @@ public class ListarVendas extends JFrame implements ActionListener{
 
         getContentPane().add(painelFundo);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(500, 320);
+        setSize(800, 500);
         setVisible(true);
         btnVoltar.addActionListener(this);
 
@@ -61,10 +61,14 @@ public class ListarVendas extends JFrame implements ActionListener{
     private void CriarTable() {
         tabela = new JTable(modelo);
         modelo.addColumn("Id");
+        modelo.addColumn("Data");
         modelo.addColumn("Valor");
         modelo.addColumn("Desconto");
-        modelo.addColumn("IdProduto");
-
+        modelo.addColumn("Produto");
+        modelo.addColumn("codProduto");
+        modelo.addColumn("quantidade");
+        modelo.addColumn("Preco");
+        
         ArrayList vendas = new ArrayList();
               
         vendas = DAO_Produtos.getListVendas();
@@ -73,7 +77,7 @@ public class ListarVendas extends JFrame implements ActionListener{
         for (Iterator iterator = vendas.iterator(); iterator.hasNext(); ) {
             
             v = (Venda) iterator.next();
-            modelo.addRow(new Object[]{v.getId(), v.getValor_venda(), v.getDesconto(), v.getId_produto()});
+            modelo.addRow(new Object[]{v.getId(),v.getData(), v.getValor_venda(), v.getDesconto(), v.getProduto().getNome(), v.getProduto().getId(), v.getQuantidade(), v.getProduto().getValor()});
     
         }
     }

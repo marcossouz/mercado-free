@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -41,8 +42,8 @@ public class ListarProdutos extends JFrame implements ActionListener {
 
     public void CriarJanela() {
         btnVoltar = new JButton("Voltar");
-        btnEditar = new JButton("Editar");
-        btnExcluir = new JButton("Excluir");
+        btnEditar = new JButton("Editar Item");
+        btnExcluir = new JButton("Excluir Item");
         painelBotoes = new JPanel();
         barraRolagem = new JScrollPane(tabela);
         painelFundo = new JPanel();
@@ -73,16 +74,17 @@ public class ListarProdutos extends JFrame implements ActionListener {
         modelo.addColumn("Garantia");
 
         ArrayList produtos = new ArrayList();
-              
+
         produtos = DAO_Produtos.getListProdutos();
         Produto p = new Produto();
-        
-        for (Iterator iterator = produtos.iterator(); iterator.hasNext(); ) {
-            
+
+        for (Iterator iterator = produtos.iterator(); iterator.hasNext();) {
+
             p = (Produto) iterator.next();
             modelo.addRow(new Object[]{p.getId(), p.getNome(), p.getTipo(), p.getValor(), p.getCor(), p.getGarantia()});
-    
+
         }
+
     }
 
     @Override
@@ -91,6 +93,32 @@ public class ListarProdutos extends JFrame implements ActionListener {
             this.setVisible(false);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             Menu.Menu();
+        }
+        if (e.getActionCommand().equals("Excluir Item")) {
+            int linha = tabela.getSelectedRow();
+            if (linha == -1) {
+                JOptionPane.showMessageDialog(null, "Você precisa selecionar uma linha para excluir o produto");
+            } else {
+                DAO_Produtos.deleteById(Integer.parseInt(tabela.getValueAt(linha, 0).toString()));
+                this.setVisible(false);
+                setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                
+                ListarProdutos lp = new ListarProdutos();
+            }
+        }
+        if (e.getActionCommand().equals("Editar Item")) {
+            Produto p = new Produto();
+            int linha = tabela.getSelectedRow();
+            if (linha == -1) {
+                JOptionPane.showMessageDialog(null, "Você precisa selecionar uma linha para editar o produto");
+            } else {
+                
+//                DAO_Produtos.atualizarById(Integer.parseInt(tabela.getValueAt(linha, 0).toString()), p);
+//                this.setVisible(false);
+//                setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//                
+//                ListarProdutos lp = new ListarProdutos();
+            }
         }
     }
 }

@@ -2,9 +2,12 @@ package loja.model;
 
 public class Venda {
     int id;
+    String data;
     float valor_venda;
     float desconto;
+    int quantidade;
     int id_produto;
+    Produto produto;
 
     public int getId() {
         return id;
@@ -12,6 +15,14 @@ public class Venda {
 
     public void setId(int id) {
         this.id = id;
+    }
+    
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 
     public float getValor_venda() {
@@ -30,6 +41,16 @@ public class Venda {
         this.desconto = desconto;
     }
 
+    public int getQuantidade() {
+        return quantidade;
+    }
+
+    public void setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
+    }
+    
+    
+
     public int getId_produto() {
         return id_produto;
     }
@@ -38,5 +59,11 @@ public class Venda {
         this.id_produto = id_produto;
     }
 
-    
+    public Produto getProduto() {
+        return produto;
+    }
+
+    public void setProduto(Produto produto) {
+        this.produto = produto;
+    }
 }
